@@ -1,0 +1,185 @@
+This file explains the purpose of each JavaScript file and the functions within them.
+
+---
+### `state.js`
+This file holds the application's state. It exports variables and functions to modify them.
+
+- `bpm`: Beats per minute for the main metronome.
+- `isPlaying`: Whether the main metronome is playing.
+- `metronomeInterval`: The interval ID for the main metronome.
+- `activeElement`: The currently active element (pad or track) for sound assignment.
+- `selectedPad`: The currently selected pad.
+- `spsCounter`: Sounds per second counter.
+- `beatCount`: The current beat of the main metronome.
+- `padBpm`: Beats per minute for the pad metronome.
+- `isPadPlaying`: Whether the pad metronome is playing.
+- `padMetronomeInterval`: The interval ID for the pad metronome.
+- `padBeatCount`: The current beat of the pad metronome.
+
+**Functions:**
+- `setBpm(value)`: Sets the `bpm`.
+- `setIsPlaying(value)`: Sets `isPlaying`.
+- `setMetronomeInterval(value)`: Sets `metronomeInterval`.
+- `setActiveElement(value)`: Sets `activeElement`.
+- `setSelectedPad(value)`: Sets `selectedPad`.
+- `setSpsCounter(value)`: Sets `spsCounter`.
+- `setBeatCount(value)`: Sets `beatCount`.
+- `setPadBpm(value)`: Sets `padBpm`.
+- `setIsPadPlaying(value)`: Sets `isPadPlaying`.
+- `setPadMetronomeInterval(value)`: Sets `padMetronomeInterval`.
+- `setPadBeatCount(value)`: Sets `padBeatCount`.
+
+---
+### `ui.js`
+This file exports references to UI elements and UI-related functions.
+
+**UI Elements:**
+- Exports constants for various DOM elements like sliders, buttons, and containers.
+
+**Functions:**
+- `formatTime(seconds)`: Formats seconds into a `mm:ss` string.
+
+---
+### `audio.js`
+This file handles audio playback.
+
+**Functions:**
+- `playMetronome()`: Plays the metronome sound and increments the beat count.
+- `playPadMetronome()`: Plays the sound of the selected pad based on the selected steps.
+- `clearIndefiniteLoop(pad)`: Clears an indefinite loop for a pad.
+- `setIndefiniteLoop(pad, interval)`: Sets an indefinite loop for a pad with a given interval.
+- `playSound(pad)`: Plays the sound of a given pad.
+
+**Intervals:**
+- A `setInterval` at the end of the file updates the SPS (Sounds Per Second) display every second.
+
+---
+### `pad-controller.js`
+This file manages the pad controller UI and logic.
+
+**Functions:**
+- `createStepButtons()`: Creates the step buttons (1-8) and adds them to the UI. It also adds click listeners to them. When a button is clicked, it updates the pad's steps, updates the UI, and plays the sound the corresponding number of times.
+- `updateActiveStepButton()`: Updates the visual state of the step buttons to show which one is active.
+- `init()`: Initializes the pad controller by calling `createStepButtons()`.
+
+---
+### `app.js`
+This is the main application file. It sets up event listeners and connects the other modules.
+
+**Event Listeners:**
+- `ui.bpmSlider`: Updates the BPM and metronome interval.
+- `ui.padBpmSlider`: Updates the pad BPM and pad metronome interval.
+- `ui.playPauseBtn`: Toggles the main metronome.
+- `ui.padPlayPauseBtn`: Toggles the pad metronome.
+- `ui.trackBtns`: Play/pause functionality for tracks.
+- `ui.pads`: Selects a pad, shows the pad controller, and plays the pad sound.
+- `ui.padVolumeSlider`: Changes the volume of the selected pad.
+- Loop buttons (`ui.loop*sBtn`): Set indefinite loops for the selected pad.
+- `ui.stopLoopBtn`: Stops the indefinite loop for the selected pad.
+- `ui.musicNotes`, `ui.changeTrackIcons`, `ui.changeMetronomeSoundIcon`: Open the sound modal to change sounds.
+- `ui.selectFileBtn`, `ui.cancelBtn`, `ui.saveBtn`: Handle the sound modal functionality.
+- `ui.soundLinkInput`, `ui.soundFileInput`: Handle the logic for selecting between a sound URL and a local file.
+
+---
+### `tooltip.js`
+This file creates custom tooltips for elements with a `title` attribute.
+
+- It listens for the `DOMContentLoaded` event.
+- It creates a tooltip element and appends it to the body.
+- It finds all elements with a `title` attribute and replaces it with a `data-title` attribute to prevent the default browser tooltip.
+- It adds `mouseenter` and `mouseleave` event listeners to show and hide the custom tooltip.
+
+---
+# Versão em Português
+---
+
+Este arquivo explica o propósito de cada arquivo JavaScript e as funções dentro deles.
+
+---
+### `state.js`
+Este arquivo contém o estado da aplicação. Ele exporta variáveis e funções para modificá-las.
+
+- `bpm`: Batidas por minuto para o metrônomo principal.
+- `isPlaying`: Se o metrônomo principal está tocando.
+- `metronomeInterval`: O ID do intervalo para o metrônomo principal.
+- `activeElement`: O elemento atualmente ativo (pad ou faixa) para atribuição de som.
+- `selectedPad`: O pad atualmente selecionado.
+- `spsCounter`: Contador de sons por segundo.
+- `beatCount`: A batida atual do metrônomo principal.
+- `padBpm`: Batidas por minuto para o metrônomo do pad.
+- `isPadPlaying`: Se o metrônomo do pad está tocando.
+- `padMetronomeInterval`: O ID do intervalo para o metrônomo do pad.
+- `padBeatCount`: A batida atual do metrônomo do pad.
+
+**Funções:**
+- `setBpm(value)`: Define o `bpm`.
+- `setIsPlaying(value)`: Define `isPlaying`.
+- `setMetronomeInterval(value)`: Define `metronomeInterval`.
+- `setActiveElement(value)`: Define `activeElement`.
+- `setSelectedPad(value)`: Define `selectedPad`.
+- `setSpsCounter(value)`: Define `spsCounter`.
+- `setBeatCount(value)`: Define `beatCount`.
+- `setPadBpm(value)`: Define `padBpm`.
+- `setIsPadPlaying(value)`: Define `isPadPlaying`.
+- `setPadMetronomeInterval(value)`: Define `padMetronomeInterval`.
+- `setPadBeatCount(value)`: Define `padBeatCount`.
+
+---
+### `ui.js`
+Este arquivo exporta referências para elementos da interface do usuário (UI) e funções relacionadas à UI.
+
+**Elementos da UI:**
+- Exporta constantes para vários elementos do DOM, como sliders, botões e contêineres.
+
+**Funções:**
+- `formatTime(seconds)`: Formata segundos em uma string `mm:ss`.
+
+---
+### `audio.js`
+Este arquivo lida com a reprodução de áudio.
+
+**Funções:**
+- `playMetronome()`: Toca o som do metrônomo e incrementa a contagem de batidas.
+- `playPadMetronome()`: Toca o som do pad selecionado com base nos steps selecionados.
+- `clearIndefiniteLoop(pad)`: Limpa um loop indefinido para um pad.
+- `setIndefiniteLoop(pad, interval)`: Define um loop indefinido para um pad com um determinado intervalo.
+- `playSound(pad)`: Toca o som de um determinado pad.
+
+**Intervalos:**
+- Um `setInterval` no final do arquivo atualiza a exibição de SPS (Sons Por Segundo) a cada segundo.
+
+---
+### `pad-controller.js`
+Este arquivo gerencia a interface do usuário e a lógica do controlador de pads.
+
+**Funções:**
+- `createStepButtons()`: Cria os botões de step (1-8) e os adiciona à interface. Ele também adiciona ouvintes de clique a eles. Quando um botão é clicado, ele atualiza os steps do pad, atualiza a interface e toca o som o número correspondente de vezes.
+- `updateActiveStepButton()`: Atualiza o estado visual dos botões de step para mostrar qual está ativo.
+- `init()`: Inicializa o controlador de pads chamando `createStepButtons()`.
+
+---
+### `app.js`
+Este é o arquivo principal da aplicação. Ele configura os ouvintes de eventos e conecta os outros módulos.
+
+**Ouvintes de Eventos:**
+- `ui.bpmSlider`: Atualiza o BPM e o intervalo do metrônomo.
+- `ui.padBpmSlider`: Atualiza o BPM do pad e o intervalo do metrônomo do pad.
+- `ui.playPauseBtn`: Ativa/desativa o metrônomo principal.
+- `ui.padPlayPauseBtn`: Ativa/desativa o metrônomo do pad.
+- `ui.trackBtns`: Funcionalidade de tocar/pausar para as faixas.
+- `ui.pads`: Seleciona um pad, mostra o controlador de pads e toca o som do pad.
+- `ui.padVolumeSlider`: Altera o volume do pad selecionado.
+- Botões de loop (`ui.loop*sBtn`): Definem loops indefinidos para o pad selecionado.
+- `ui.stopLoopBtn`: Para o loop indefinido para o pad selecionado.
+- `ui.musicNotes`, `ui.changeTrackIcons`, `ui.changeMetronomeSoundIcon`: Abre o modal de som para alterar os sons.
+- `ui.selectFileBtn`, `ui.cancelBtn`, `ui.saveBtn`: Lidam com a funcionalidade do modal de som.
+- `ui.soundLinkInput`, `ui.soundFileInput`: Lidam com a lógica para selecionar entre uma URL de som e um arquivo local.
+
+---
+### `tooltip.js`
+Este arquivo cria dicas de ferramentas personalizadas para elementos com um atributo `title`.
+
+- Ele ouve o evento `DOMContentLoaded`.
+- Ele cria um elemento de dica de ferramenta e o anexa ao corpo.
+- Ele encontra todos os elementos com um atributo `title` e o substitui por um atributo `data-title` para evitar a dica de ferramenta padrão do navegador.
+- Ele adiciona ouvintes de eventos `mouseenter` e `mouseleave` para mostrar e ocultar a dica de ferramenta personalizada.

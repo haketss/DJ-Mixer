@@ -1,6 +1,36 @@
+
 import * as state from './state.js';
 import * as audio from './audio.js';
 import * as ui from './ui.js';
+import * as padController from './pad-controller.js';
+
+padController.init();
+
+// Initialize pads
+ui.pads.forEach((pad, index) => {
+    const padId = `pad-${index + 1}`;
+    pad.id = padId;
+    state.initPadState(padId);
+
+    pad.addEventListener('click', () => {
+        state.setSelectedPadId(padId);
+        const padState = state.getPadState(padId);
+
+        ui.padController.classList.remove('hidden');
+        ui.padVolumeSlider.value = padState.volume;
+        ui.padBpmSlider.value = padState.bpm;
+        ui.padBpmDisplay.textContent = padState.bpm;
+        ui.padPlayPauseBtn.textContent = padState.isPlaying ? 'Pause' : 'Play';
+
+        padController.updateActiveStepButton();
+
+        const sound = padState.sound;
+        if (sound) {
+            audio.playSound(pad);
+        }
+    });
+});
+
 
 ui.bpmSlider.addEventListener('input', () => {
     state.setBpm(ui.bpmSlider.value);
@@ -12,11 +42,16 @@ ui.bpmSlider.addEventListener('input', () => {
 });
 
 ui.padBpmSlider.addEventListener('input', () => {
-    state.setPadBpm(ui.padBpmSlider.value);
-    ui.padBpmDisplay.textContent = state.padBpm;
-    if (state.isPadPlaying) {
-        clearInterval(state.padMetronomeInterval);
-        state.setPadMetronomeInterval(setInterval(audio.playPadMetronome, (60 / state.padBpm) * 1000));
+    if (state.selectedPadId) {
+        const padState = state.getPadState(state.selectedPadId);
+        state.setPadBpm(state.selectedPadId, ui.padBpmSlider.value);
+        ui.padBpmDisplay.textContent = ui.padBpmSlider.value;
+
+        if (padState.isPlaying) {
+            clearInterval(padState.metronomeInterval);
+            const newInterval = setInterval(() => audio.playPadSound(state.selectedPadId), (60 / ui.padBpmSlider.value) * 1000);
+            state.setPadMetronomeInterval(state.selectedPadId, newInterval);
+        }
     }
 });
 
@@ -33,13 +68,19 @@ ui.playPauseBtn.addEventListener('click', () => {
 });
 
 ui.padPlayPauseBtn.addEventListener('click', () => {
-    state.setIsPadPlaying(!state.isPadPlaying);
-    if (state.isPadPlaying) {
-        ui.padPlayPauseBtn.textContent = 'Pause';
-        state.setPadMetronomeInterval(setInterval(audio.playPadMetronome, (60 / state.padBpm) * 1000));
-    } else {
-        ui.padPlayPauseBtn.textContent = 'Play';
-        clearInterval(state.padMetronomeInterval);
+    if (state.selectedPadId) {
+        const padState = state.getPadState(state.selectedPadId);
+        state.setIsPadPlaying(state.selectedPadId, !padState.isPlaying);
+
+        if (padState.isPlaying) {
+            ui.padPlayPauseBtn.textContent = 'Pause';
+            const newInterval = setInterval(() => audio.playPadSound(state.selectedPadId), (60 / padState.bpm) * 1000);
+            state.setPadMetronomeInterval(state.selectedPadId, newInterval);
+        } else {
+            ui.padPlayPauseBtn.textContent = 'Play';
+            clearInterval(padState.metronomeInterval);
+            state.setPadMetronomeInterval(state.selectedPadId, null);
+        }
     }
 });
 
@@ -68,77 +109,51 @@ ui.trackBtns.forEach((btn, index) => {
     });
 });
 
-ui.pads.forEach(pad => {
-    pad.dataset.volume = "1";
-    pad.dataset.steps = "1";
-
-    pad.addEventListener('click', () => {
-        state.setSelectedPad(pad);
-        ui.padController.classList.remove('hidden');
-        ui.padVolumeSlider.value = state.selectedPad.dataset.volume;
-        ui.padStepsSelect.value = state.selectedPad.dataset.steps;
-
-        const sound = pad.dataset.sound;
-        if (sound) {
-            const audio = new Audio(sound);
-            audio.volume = pad.dataset.volume;
-            audio.play();
-            state.setSpsCounter(state.spsCounter + 1);
-        }
-    });
-});
-
 ui.padVolumeSlider.addEventListener('input', () => {
-    if (state.selectedPad) {
-        state.selectedPad.dataset.volume = ui.padVolumeSlider.value;
-    }
-});
-
-ui.padStepsSelect.addEventListener('change', () => {
-    if (state.selectedPad) {
-        state.selectedPad.dataset.steps = ui.padStepsSelect.value;
+    if (state.selectedPadId) {
+        state.setPadVolume(state.selectedPadId, ui.padVolumeSlider.value);
     }
 });
 
 ui.loop1sBtn.addEventListener('click', () => {
-    if (state.selectedPad) {
-        audio.setIndefiniteLoop(state.selectedPad, 1000);
+    if (state.selectedPadId) {
+        audio.setIndefiniteLoop(state.selectedPadId, 1000);
     }
 });
 
 ui.loop05sBtn.addEventListener('click', () => {
-    if (state.selectedPad) {
-        audio.setIndefiniteLoop(state.selectedPad, 500);
+    if (state.selectedPadId) {
+        audio.setIndefiniteLoop(state.selectedPadId, 500);
     }
 });
 
 ui.loop2sBtn.addEventListener('click', () => {
-    if (state.selectedPad) {
-        audio.setIndefiniteLoop(state.selectedPad, 2000);
+    if (state.selectedPadId) {
+        audio.setIndefiniteLoop(state.selectedPadId, 2000);
     }
 });
 
 ui.loop3sBtn.addEventListener('click', () => {
-    if (state.selectedPad) {
-        audio.setIndefiniteLoop(state.selectedPad, 3000);
+    if (state.selectedPadId) {
+        audio.setIndefiniteLoop(state.selectedPadId, 3000);
     }
 });
 
 ui.loop4sBtn.addEventListener('click', () => {
-    if (state.selectedPad) {
-        audio.setIndefiniteLoop(state.selectedPad, 4000);
+    if (state.selectedPadId) {
+        audio.setIndefiniteLoop(state.selectedPadId, 4000);
     }
 });
 
 ui.loop5sBtn.addEventListener('click', () => {
-    if (state.selectedPad) {
-        audio.setIndefiniteLoop(state.selectedPad, 5000);
+    if (state.selectedPadId) {
+        audio.setIndefiniteLoop(state.selectedPadId, 5000);
     }
 });
 
 ui.stopLoopBtn.addEventListener('click', () => {
-    if (state.selectedPad) {
-        audio.clearIndefiniteLoop(state.selectedPad);
+    if (state.selectedPadId) {
+        audio.clearIndefiniteLoop(state.selectedPadId);
     }
 });
 
@@ -187,7 +202,9 @@ ui.saveBtn.addEventListener('click', () => {
 
     if (soundUrl) {
         if (type === 'pad') {
-            state.activeElement.dataset.sound = soundUrl;
+            const padId = state.activeElement.id;
+            state.setPadSound(padId, soundUrl);
+            state.activeElement.dataset.sound = soundUrl; // Keep this for now for the simple click sound
             if (soundName) {
                 state.activeElement.querySelector('.pad-name').textContent = soundName;
             }
@@ -215,10 +232,27 @@ ui.soundLinkInput.addEventListener('click', () => {
 
 ui.soundFileInput.addEventListener('change', () => {
     ui.soundLinkInput.value = '';
-});r('click', () => {
-    ui.soundFileInput.value = '';
 });
 
-ui.soundFileInput.addEventListener('change', () => {
-    ui.soundLinkInput.value = '';
+document.addEventListener('keydown', (e) => {
+    const keyPadMap = {
+        'ArrowUp': 0,
+        'ArrowLeft': 1,
+        'ArrowDown': 2,
+        'ArrowRight': 3
+    };
+
+    if (keyPadMap.hasOwnProperty(e.key)) {
+        e.preventDefault();
+        const padIndex = keyPadMap[e.key];
+        const pad = ui.pads[padIndex];
+        if (pad) {
+            audio.playSound(pad);
+            // Optional: add a visual feedback, like a class
+            pad.classList.add('bg-gray-400');
+            setTimeout(() => {
+                pad.classList.remove('bg-gray-400');
+            }, 100);
+        }
+    }
 });

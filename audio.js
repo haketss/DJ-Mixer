@@ -7,15 +7,15 @@ export function playMetronome() {
     metronomeSound.play();
 }
 
-export function playPadMetronome() {
-    state.setPadBeatCount(state.padBeatCount + 1);
-    if (state.selectedPad) {
-        const steps = parseInt(state.selectedPad.dataset.steps);
-        if (state.padBeatCount % steps === 0) {
-            const sound = state.selectedPad.dataset.sound;
+export function playPadSound(padId) {
+    const padState = state.getPadState(padId);
+    if (padState) {
+        state.setPadBeatCount(padId, padState.beatCount + 1);
+        if (padState.beatCount % padState.steps === 0) {
+            const sound = padState.sound;
             if (sound) {
                 const audio = new Audio(sound);
-                audio.volume = state.selectedPad.dataset.volume;
+                audio.volume = padState.volume;
                 audio.play();
                 state.setSpsCounter(state.spsCounter + 1);
             }
@@ -23,26 +23,39 @@ export function playPadMetronome() {
     }
 }
 
-export function clearIndefiniteLoop(pad) {
-    if (pad.dataset.intervalId) {
-        clearInterval(pad.dataset.intervalId);
-        pad.removeAttribute('data-interval-id');
+export function clearIndefiniteLoop(padId) {
+    const padState = state.getPadState(padId);
+    if (padState && padState.loopInterval) {
+        clearInterval(padState.loopInterval);
+        state.setPadLoopInterval(padId, null);
     }
 }
 
-export function setIndefiniteLoop(pad, interval) {
-    clearIndefiniteLoop(pad);
+export function setIndefiniteLoop(padId, interval) {
+    clearIndefiniteLoop(padId);
+    const padState = state.getPadState(padId);
+    if (padState) {
+        const newInterval = setInterval(() => {
+            const sound = padState.sound;
+            if (sound) {
+                const audio = new Audio(sound);
+                audio.volume = padState.volume;
+                audio.play();
+                state.setSpsCounter(state.spsCounter + 1);
+            }
+        }, interval);
+        state.setPadLoopInterval(padId, newInterval);
+    }
+}
 
-    const intervalId = setInterval(() => {
-        const sound = pad.dataset.sound;
-        if (sound) {
-            const audio = new Audio(sound);
-            audio.volume = pad.dataset.volume;
-            audio.play();
-            state.setSpsCounter(state.spsCounter + 1);
-        }
-    }, interval);
-    pad.dataset.intervalId = intervalId;
+export function playSound(pad) {
+    const padState = state.getPadState(pad.id);
+    if (padState && padState.sound) {
+        const audio = new Audio(padState.sound);
+        audio.volume = padState.volume;
+        audio.play();
+        state.setSpsCounter(state.spsCounter + 1);
+    }
 }
 
 setInterval(() => {

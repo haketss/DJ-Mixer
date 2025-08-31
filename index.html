@@ -50,15 +50,9 @@
                     </div>
                     <div>
                         <label for="pad-steps-select" class="block mb-2">Steps</label>
-                        <select id="pad-steps-select" class="w-full bg-gray-700 text-white p-2 rounded"
+                        <div id="pad-steps-container" class="flex flex-wrap gap-2"
                             title="Plays the sound only every N beats.">
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="4">4</option>
-                            <option value="6">6</option>
-                            <option value="8">8</option>
-                            <option value="10">10</option>
-                        </select>
+                        </div>
                     </div>
                     <div class="mt-4">
                         <h3 class="text-lg font-bold mb-2">Indefinite Loop</h3>
@@ -85,7 +79,7 @@
                             <span id="pad-bpm-display" class="text-4xl font-bold">120</span>
                             <span class="text-lg ml-2">BPM</span>
                         </div>
-                        <input id="pad-bpm-slider" type="range" min="60" max="180" value="120" class="w-full"
+                        <input id="pad-bpm-slider" type="range" min="10" max="180" value="120" class="w-full"
                             title="Controls the BPM of the selected pad.">
                         <div class="flex justify-center mt-4">
                             <button id="pad-play-pause-btn"
@@ -141,24 +135,28 @@
                         <div class="pad-progress"></div>
                     </button>
                     <div class="music-note absolute top-2 right-2 text-white text-2xl cursor-pointer">♫</div>
+                    <div class="arrow-indicator absolute bottom-2 right-2 text-white text-2xl">↑</div>
                 </div>
                 <div class="pad-container relative">
                     <button class="pad bg-blue-500 h-24 w-full rounded-lg"><span class="pad-name"></span>
                         <div class="pad-progress"></div>
                     </button>
                     <div class="music-note absolute top-2 right-2 text-white text-2xl cursor-pointer">♫</div>
+                    <div class="arrow-indicator absolute bottom-2 right-2 text-white text-2xl">←</div>
                 </div>
                 <div class="pad-container relative">
                     <button class="pad bg-green-500 h-24 w-full rounded-lg"><span class="pad-name"></span>
                         <div class="pad-progress"></div>
                     </button>
                     <div class="music-note absolute top-2 right-2 text-white text-2xl cursor-pointer">♫</div>
+                    <div class="arrow-indicator absolute bottom-2 right-2 text-white text-2xl">↓</div>
                 </div>
                 <div class="pad-container relative">
                     <button class="pad bg-yellow-500 h-24 w-full rounded-lg"><span class="pad-name"></span>
                         <div class="pad-progress"></div>
                     </button>
                     <div class="music-note absolute top-2 right-2 text-white text-2xl cursor-pointer">♫</div>
+                    <div class="arrow-indicator absolute bottom-2 right-2 text-white text-2xl">→</div>
                 </div>
                 <div class="pad-container relative">
                     <button class="pad bg-purple-500 h-24 w-full rounded-lg"><span class="pad-name"></span>
@@ -266,6 +264,7 @@
     <script src="./state.js" type="module"></script>
     <script src="./ui.js" type="module"></script>
     <script src="./audio.js" type="module"></script>
+    <script src="./pad-controller.js" type="module"></script>
     <script src="./app.js" type="module"></script>
     <script src="./tooltip.js"></script>
 </body>
